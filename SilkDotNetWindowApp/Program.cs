@@ -6,6 +6,7 @@ using Serilog.Sinks.SystemConsole.Themes;
 using SharedLibrary.Extensions;
 using SilkDotNetLibrary.OpenGL.Apps;
 using System;
+using System.Threading.Tasks;
 
 var builder = Host.CreateDefaultBuilder(args);
 

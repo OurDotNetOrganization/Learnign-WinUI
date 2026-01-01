@@ -28,6 +28,15 @@ internal class App
             Dock = DockStyle.Fill,
             BackColor = Color.Black,
         };
+
+        //Add MenuStrip
+
+        _window.MainMenuStrip = new MenuStrip();
+        _window.Controls.Add(_window.MainMenuStrip);
+        _window.MainMenuStrip.Items.Add("File");
+        _window.MainMenuStrip.Items.Add("Edit");
+        _window.MainMenuStrip.Items.Add("View");
+
         IntPtr hInstance = Process.GetCurrentProcess().Handle;
         _vkWindowSurface = new VkWindowSurface(new WindowHandle(_window.Handle, hInstance));
         _vkContext = new VkContext(WIDTH, HEIGHT, _vkWindowSurface);

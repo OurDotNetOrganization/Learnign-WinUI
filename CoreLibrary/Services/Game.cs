@@ -9,10 +9,10 @@ namespace CoreLibrary.Services;
 
 public class Game : IGame, IDisposable
 {
-    private readonly EntitySystem _entitySystem;
-    private readonly ComponentSystem<TransformComponent> _transformComponentSystem;
-    private readonly ILogger<Game> _logger;
-    private readonly IEventHandler _eventHandler;
+    protected readonly EntitySystem _entitySystem;
+    protected readonly ComponentSystem<TransformComponent> _transformComponentSystem;
+    protected readonly ILogger<Game> _logger;
+    protected readonly IEventHandler _eventHandler;
     public Game(EntitySystem entitySystem, 
                 ComponentSystem<TransformComponent> transformComponent, 
                 ILogger<Game> logger,

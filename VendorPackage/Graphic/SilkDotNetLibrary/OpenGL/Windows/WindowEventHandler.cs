@@ -125,14 +125,14 @@ public class WindowEventHandler : IWindowEventHandler
             mice.Scroll += OnMouseWheel;
         }
         GL = _openGLContext.OnLoad();
-        //ImGuiController = new ImGuiController(GL, _window, InputContext);
+        ImGuiController = new ImGuiController(GL, _window, InputContext);
     }
 
     public void OnRender(double dt)
     {
         _openGLContext.OnRender(dt);
-        //ImGuiNET.ImGui.ShowDemoWindow();
-        //ImGuiController.Render();
+        ImGuiNET.ImGui.ShowDemoWindow();
+        ImGuiController.Render();
     }
 
     public void OnStop()
@@ -156,7 +156,7 @@ public class WindowEventHandler : IWindowEventHandler
             }
         }
         _eventHandler.OnWindowUpdateUpdateHandler(dt);
-        //ImGuiController.Update((float)dt);
+        ImGuiController.Update((float)dt);
         _openGLContext.OnUpdate(dt);
 
     }
@@ -215,7 +215,8 @@ public class WindowEventHandler : IWindowEventHandler
         InputContext?.Dispose();
         _logger.LogInformation("GL Disposing...");
         _openGLContext.Dispose();
-        _logger.LogInformation("Window Disposes...");
+        _logger.LogInformation("Window Disposing...");
+        //_logger.LogInformation("Window Disposes...");
         //if (Window is not null)
         //{
         //    Window.Dispose();
@@ -225,8 +226,8 @@ public class WindowEventHandler : IWindowEventHandler
         //{
         //    Log.Information("Window could not be found...");
         //}
-        _window.Dispose();
-        _logger.LogInformation("Window Disposed...");
+        //_window.Dispose();
+        //_logger.LogInformation("Window Disposed...");
     }
 
     protected virtual void Dispose(bool disposing)

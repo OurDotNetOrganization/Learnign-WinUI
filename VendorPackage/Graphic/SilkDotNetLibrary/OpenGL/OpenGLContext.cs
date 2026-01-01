@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using MathNet.Numerics;
+using Microsoft.Extensions.Logging;
 using Serilog;
 using SharedLibrary.Cameras;
 using SharedLibrary.Math;
@@ -338,7 +339,17 @@ public class OpenGLContext : IOpenGLContext, IDisposable
         //Slightly rotate the cube to give it an angled face to look at
         LightingShader.UseBy(_gl);
 
-        LightingShader.SetUniformBy(_gl, "uModel", Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(difference))/* * Matrix4x4.CreateTranslation(new Vector3(0f, -1 * Time, 0f))*/);
+        Matrix4x4 shearMatrix = new Matrix4x4
+        (
+            1, 0, 0, 0,
+            0.5f, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1
+        );
+
+        var model = Matrix4x4.CreateRotationX(MathHelper.DegreesToRadians(difference)) * shearMatrix;
+
+        LightingShader.SetUniformBy(_gl, "uModel", model);
         LightingShader.SetUniformBy(_gl, "uView", _camera.GetViewMatrix());
         LightingShader.SetUniformBy(_gl, "uProjection", _camera.GetProjectionMatrix());
         LightingShader.SetUniformBy(_gl, "viewPos", _camera.Position);

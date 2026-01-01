@@ -16,6 +16,7 @@ namespace SharedLibrary.Extensions
                 .MinimumLevel.Verbose()
                 .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
                 .Enrich.FromLogContext()
+                .Enrich.WithThreadId()
                 .WriteTo.File("Logs/log.txt",
                     fileSizeLimitBytes: 1_000_000,
                     rollOnFileSizeLimit: true,
@@ -24,7 +25,7 @@ namespace SharedLibrary.Extensions
                     rollingInterval: RollingInterval.Hour)
                 .WriteTo.Async(configure=>configure.Console(
                     outputTemplate: "[{Timestamp:MM/dd/HH:mm:ss}({ThreadId}){Level:u3}]{Message:lj}{NewLine}{Exception}",
-                    theme: SystemConsoleTheme.Literate).Enrich.WithThreadId())
+                    theme: SystemConsoleTheme.Literate))
                 .WriteTo.Async(configure => configure.File("Logs/log.txt",
                     fileSizeLimitBytes: 1_000_000,
                     rollOnFileSizeLimit: true,

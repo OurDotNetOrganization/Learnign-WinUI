@@ -6,6 +6,7 @@ namespace SilkDotNetLibrary.OpenGL.Primitives;
 /// Sphere - A UV sphere primitive with complete vertex attributes
 /// Generated using spherical coordinates with configurable subdivision levels
 /// Position (3) + Normal (3) + TexCoords (2) + Tangent (3) + BiTangent (3) + Color (3) = 17 floats
+/// <seealso cref="https://en.wikipedia.org/wiki/Differential_geometry_of_surfaces"/>
 /// </summary>
 public static class Sphere
 {

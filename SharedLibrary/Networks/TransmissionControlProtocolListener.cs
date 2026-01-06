@@ -7,11 +7,11 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace SharedLibrary.Networking
+namespace SharedLibrary.Networks
 {
     public class TransmissionControlProtocolListener
     {
-        public async IAsyncEnumerable<string> ListenAsync(IPAddress iPAddress, 
+        public async IAsyncEnumerable<Memory<byte>> ListenAsync(IPAddress iPAddress,
             short port = 13, [EnumeratorCancellation] CancellationToken cancellationToken = default)
         {
             var ipEndPoint = new IPEndPoint(iPAddress, Convert.ToInt32(port));
@@ -24,23 +24,52 @@ namespace SharedLibrary.Networking
                 using TcpClient handler = await listener.AcceptTcpClientAsync(cancellationToken);
                 if(cancellationToken.IsCancellationRequested)
                 {
+                    handler.Close();
+                    listener.Stop();
                     yield break;
                 }
                 await using NetworkStream stream = handler.GetStream();
 
-                var message = $"📅 {DateTime.Now} 🕛";
-                var dateTimeBytes = Encoding.UTF8.GetBytes(message);
+                Memory<byte> buffer = new byte[1_024];
+                int received = 0;
 
-                yield return message;
-
-                await stream.WriteAsync(dateTimeBytes, cancellationToken);
-                if(cancellationToken.IsCancellationRequested)
+                try
                 {
+                    received = await stream.ReadAsync(buffer, cancellationToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    stream.Close();
+                    handler.Close();
+                    listener.Stop();
                     yield break;
                 }
-                Console.WriteLine($"Sent message: \"{message}\"");
-                // Sample output:
-                //     Sent message: "📅 8/22/2022 9:07:17 AM 🕛"
+
+                string message = $"📅 {DateTime.Now} 🕛";
+                if (received > 0)
+                {
+                    var receivedMessage = Encoding.UTF8.GetString(buffer.Span.Slice(0, received));
+                    message = receivedMessage;
+                }
+                try
+                {
+                    await stream.WriteAsync(Encoding.UTF8.GetBytes(message), cancellationToken);
+                }
+                catch (TaskCanceledException)
+                {
+                    handler.Close();
+                    stream.Close();
+                    listener.Stop();
+                    yield break;
+                }
+                if(cancellationToken.IsCancellationRequested)
+                {
+                    handler.Close();
+                    stream.Close();
+                    listener.Stop();
+                    yield break;
+                }
+                yield return buffer;
             }
             finally
             {
